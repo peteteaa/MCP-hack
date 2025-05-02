@@ -4,12 +4,10 @@ import { prompt } from "./arcade.js";
 
 dotenv.config();
 
-// const eventData = await scrape();
+const eventData = await scrape();
 
-// console.log(eventData);
+console.log(eventData);
 
-// console.log("Got event data, now sending to Arcade...");
+console.log("Got event data, now sending to Arcade...");
 
-// prompt(eventData);
-
-await prompt(null);
+await prompt(eventData);

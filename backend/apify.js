@@ -36,23 +36,23 @@ const input = {
     "searchTerms": [
         "GTC 2025"
     ],
-    "since": "2021-12-31_23:59:59_UTC",
-    "until": "2024-12-31_23:59:59_UTC"
+    "since": "2024-12-31_23:59:59_UTC",
+    "until": "2025-12-31_23:59:59_UTC",
+    "maxItems": 20,
 };
 
 export async function scrape() {
-    // console.log("apify client ", client);
-
     // Run the Actor and wait for it to finish
     const run = await client.actor("CJdippxWmn9uRfooo").call(input);
 
-    // Fetch and print Actor results from the run's dataset (if any)
-    // console.log("Results from dataset");
+    // Fetch Actor results from the run's dataset
     const { items } = await client.dataset(run.defaultDatasetId).listItems();
 
     let retVal = "";
     items.forEach((item) => {
-        retVal += JSON.stringify(item, null, 2);
+        if (item.text) {
+            retVal += item.text + "\n";
+        }
     });
     return retVal;
 }

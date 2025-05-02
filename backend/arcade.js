@@ -38,7 +38,7 @@ export async function prompt(eventData) {
         messages: [
             {
                 role: "system",
-                content: `You are able to send emails through gmail. Send out an email to the newsletter subscribers about how cool Arcade.dev is. Here is a list of all the email subscribers: ${emailSubscribers.join(", ")}.`,
+                content: `You are able to send emails through gmail. Here is a list of all the email subscribers: ${emailSubscribers.join(", ")}. Send out an email to the newsletter subscribers summarizing all the tweets from this: ${eventData}.`,
             },
         ],
         model: "gpt-4",
@@ -54,7 +54,7 @@ export async function prompt(eventData) {
         messages: [
             {
                 role: "system",
-                content: `You are able to send tweets on X. Send out a tweet about how cool Arcade.dev is.`,
+                content: `You are able to send tweets on X. Send out a tweet summarizing all the tweets from this: ${eventData}.`,
             },
         ],
         model: "gpt-4",
