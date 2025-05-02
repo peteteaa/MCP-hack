@@ -5,7 +5,7 @@ dotenv.config();
 
 // Initialize the ApifyClient with API token
 const client = new ApifyClient({
-    token: process.env.APIFY_API_TOKEN,
+    token: process.env.APIFY_API_KEY,
 });
 
 // Prepare Actor input
@@ -40,14 +40,19 @@ const input = {
     "until": "2024-12-31_23:59:59_UTC"
 };
 
-(async () => {
+export async function scrape() {
+    // console.log("apify client ", client);
+
     // Run the Actor and wait for it to finish
     const run = await client.actor("CJdippxWmn9uRfooo").call(input);
 
     // Fetch and print Actor results from the run's dataset (if any)
-    console.log("Results from dataset");
+    // console.log("Results from dataset");
     const { items } = await client.dataset(run.defaultDatasetId).listItems();
+
+    let retVal = "";
     items.forEach((item) => {
-        console.dir(item);
+        retVal += JSON.stringify(item, null, 2);
     });
-})();
+    return retVal;
+}

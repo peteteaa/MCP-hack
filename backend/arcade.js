@@ -10,47 +10,73 @@ const client = new OpenAI({
     apiKey: process.env.ARCADE_API_KEY,
 });
 
-const emailUserId = "pulseagentmcp@gmail.com";
+const userId = "pulseagentmcp@gmail.com";
 
 const tools = [
     "Google.SendEmail",
     "X.PostTweet",
 ];
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-});
+const emailSubscribers = [
+    "nishilanand21@gmail.com",
+];
 
-function input(promptText) {
-    return new Promise((resolve) => {
-        rl.question(promptText, resolve);
-    });
-}
+// const rl = readline.createInterface({
+//     input: process.stdin,
+//     output: process.stdout,
+// });
 
-while (true) {
-    // Ask the user for input
-    const userInput = await input("Enter your prompt (type 'exit' to quit): ");
-    if (userInput.toLowerCase() === "exit") {
-        break;
-    }
+// function input(promptText) {
+//     return new Promise((resolve) => {
+//         rl.question(promptText, resolve);
+//     });
+// }
 
+export async function prompt(eventData) {
     // Use a tool and generate a response
-    const response = await client.chat.completions.create({
+    const response1 = await client.chat.completions.create({
         messages: [
             {
                 role: "system",
-                content: "You are a helpful assistant that can send emails and tweets.",
+                content: `You are able to send emails through gmail. Send out an email to the newsletter subscribers about how cool Arcade.dev is. Here is a list of all the email subscribers: ${emailSubscribers.join(", ")}.`,
             },
-            { role: "user", content: userInput },
         ],
         model: "gpt-4",
-        user: emailUserId,
+        user: userId,
         tools: tools,
         tool_choice: "generate",
     });
 
-    console.log(response.choices[0].message.content);
+    console.log("Send email to subscribers");
+    console.log(response1.choices[0].message.content);
+
+    const response2 = await client.chat.completions.create({
+        messages: [
+            {
+                role: "system",
+                content: `You are able to send tweets on X. Send out a tweet about how cool Arcade.dev is.`,
+            },
+        ],
+        model: "gpt-4",
+        user: userId,
+        tools: tools,
+        tool_choice: "generate",
+    });
+
+    console.log("Sent tweet to X");
+    console.log(response2.choices[0].message.content);
 }
 
-rl.close();
+// while (true) {
+//     // Ask the user for input
+//     const userInput = await input("Enter your prompt (type 'exit' to quit): ");
+//     if (userInput.toLowerCase() === "exit") {
+//         break;
+//     }
+
+//     const response = await prompt();
+
+//     console.log(response.choices[0].message.content);
+// }
+
+// rl.close();
