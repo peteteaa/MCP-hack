@@ -10,19 +10,11 @@ const client = new OpenAI({
     apiKey: process.env.ARCADE_API_KEY,
 });
 
-let userId = "nishilanand21@gmail.com";
+const emailUserId = "pulseagentmcp@gmail.com";
 
-let tools = [
+const tools = [
     "Google.SendEmail",
-    "GitHub.SetStarred",
-    "Github.ListStargazers",
-    "Github.CreateIssue",
-    "Github.CreateIssueComment",
-    "Github.ListPullRequests",
-    "Github.GetPullRequest",
-    "Github.UpdatePullRequest",
-    "Github.GetRepository",
-    "Github.ListRepositoryActivities",
+    "X.PostTweet",
 ];
 
 const rl = readline.createInterface({
@@ -48,12 +40,12 @@ while (true) {
         messages: [
             {
                 role: "system",
-                content: "You are a helpful assistant that can interact with GitHub and send emails.",
+                content: "You are a helpful assistant that can send emails and tweets.",
             },
             { role: "user", content: userInput },
         ],
         model: "gpt-4",
-        user: userId,
+        user: emailUserId,
         tools: tools,
         tool_choice: "generate",
     });
