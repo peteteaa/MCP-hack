@@ -179,6 +179,45 @@ export default function EventsPage() {
     }
   };
 
+  const handleEventInterest = async (event: Event) => {
+    try {
+      setLoading(true);
+      
+      // Call our API endpoint to track interest in this event
+      const response = await fetch('/api/event-tracking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ event }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to track event interest');
+      }
+      
+      const result = await response.json();
+      
+      // Show success message
+      alert(`Interest in "${event.title}" has been tracked! You'll receive updates about this event on the email you provided in the subscription page.`);
+      
+      // Redirect to subscription page if user hasn't subscribed yet
+      const hasSubscribed = localStorage.getItem('hasSubscribed');
+      if (!hasSubscribed) {
+        if (confirm('Would you like to subscribe to receive email updates about this and similar events?')) {
+          // Store the event data in localStorage to use it on the subscription page
+          localStorage.setItem('selectedEvent', JSON.stringify(event));
+          window.location.href = '/subscribe';
+        }
+      }
+    } catch (error) {
+      console.error('Error tracking event interest:', error);
+      alert('Failed to track event interest. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 flex flex-col py-12 px-4 sm:px-6 lg:px-8">
       {/* Animated background elements */}
@@ -315,7 +354,18 @@ export default function EventsPage() {
                       {event.location !== "Location not specified" && (
                         <p className="mb-1">📍 {event.location}</p>
                       )}
-                      <p className="mt-2">
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {event.keywords.map((keyword) => (
+                          <Badge
+                            key={keyword}
+                            variant="outline"
+                            className="bg-white/5 text-indigo-200 border-indigo-400/30"
+                          >
+                            {keyword}
+                          </Badge>
+                        ))}
+                      </div>
+                      <div className="mt-4 flex justify-between items-center">
                         <a 
                           href={event.url} 
                           target="_blank" 
@@ -324,18 +374,15 @@ export default function EventsPage() {
                         >
                           Visit Event Page <ExternalLink className="ml-1 h-3 w-3" />
                         </a>
-                      </p>
-                    </div>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {event.keywords.map((keyword) => (
-                        <Badge
-                          key={keyword}
+                        <Button
+                          size="sm"
                           variant="outline"
-                          className="bg-white/5 text-indigo-200 border-indigo-400/30"
+                          className="bg-white/5 border border-indigo-400/30 text-indigo-200 hover:bg-white/10"
+                          onClick={() => handleEventInterest(event)}
                         >
-                          {keyword}
-                        </Badge>
-                      ))}
+                          Track Interest
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

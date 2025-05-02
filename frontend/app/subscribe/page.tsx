@@ -17,9 +17,22 @@ export default function SubscribePage() {
   const [error, setError] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [selectedEvent, setSelectedEvent] = useState<any>(null)
 
   useEffect(() => {
     setMounted(true)
+    
+    // Check if there's a selected event in localStorage
+    if (typeof window !== 'undefined') {
+      const storedEvent = localStorage.getItem('selectedEvent')
+      if (storedEvent) {
+        try {
+          setSelectedEvent(JSON.parse(storedEvent))
+        } catch (e) {
+          console.error('Error parsing stored event:', e)
+        }
+      }
+    }
   }, [])
 
   const validateForm = () => {
@@ -42,21 +55,44 @@ export default function SubscribePage() {
 
     setIsSubmitting(true)
 
-    // Simulate form submission
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      // Create API endpoint to save subscription
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          email,
+          event: selectedEvent || null,
+          interests: selectedEvent ? selectedEvent.keywords : []
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to subscribe');
+      }
+
+      // Mark user as subscribed in localStorage
+      localStorage.setItem('hasSubscribed', 'true');
+      
+      // Clear the selected event
+      localStorage.removeItem('selectedEvent');
 
       toast({
         title: "Subscription successful!",
-        description: "You'll receive updates about upcoming AI events.",
+        description: selectedEvent 
+          ? `You'll receive updates about "${selectedEvent.title}" and similar AI events.`
+          : "You'll receive updates about upcoming AI events.",
       })
 
       // Reset form
       setEmail("")
     } catch (error) {
+      console.error("Error subscribing:", error)
       toast({
-        title: "Something went wrong",
-        description: "Please try again later.",
+        title: "Subscription failed",
+        description: "There was an error processing your subscription. Please try again.",
         variant: "destructive",
       })
     } finally {
@@ -99,6 +135,35 @@ export default function SubscribePage() {
         <p className="text-center text-indigo-200/80 text-lg mb-8 max-w-md mx-auto">
           Get notified about upcoming AI events and opportunities
         </p>
+      </div>
+
+      <div className="space-y-6">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-white">Subscribe to AI Event Updates</h2>
+          <p className="text-indigo-200/80 mt-2">
+            {selectedEvent 
+              ? `Get notified about "${selectedEvent.title}" and similar AI events`
+              : "Stay updated on the latest AI conferences, workshops, and meetups"}
+          </p>
+        </div>
+
+        {selectedEvent && (
+          <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
+            <h3 className="font-semibold text-white mb-2">Selected Event:</h3>
+            <p className="text-indigo-200 font-medium">{selectedEvent.title}</p>
+            <p className="text-indigo-200/80 text-sm mt-1">{selectedEvent.description}</p>
+            <div className="mt-2 flex flex-wrap gap-1">
+              {selectedEvent.keywords?.map((keyword: string) => (
+                <span 
+                  key={keyword}
+                  className="px-2 py-0.5 bg-white/5 text-indigo-200 text-xs rounded-full"
+                >
+                  {keyword}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 mb-8">
