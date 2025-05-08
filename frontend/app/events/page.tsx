@@ -184,7 +184,7 @@ export default function EventsPage() {
       setLoading(true);
       
       // Call our API endpoint to track interest in this event
-      const response = await fetch('/api/event-tracking', {
+      const trackResponse = await fetch('/api/event-tracking', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -192,27 +192,37 @@ export default function EventsPage() {
         body: JSON.stringify({ event }),
       });
       
-      if (!response.ok) {
+      if (!trackResponse.ok) {
         throw new Error('Failed to track event interest');
       }
       
-      const result = await response.json();
+      // Save the selected event to our context API
+      await fetch('/api/context', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ selectedEvent: event }),
+      });
       
-      // Show success message
-      alert(`Interest in "${event.title}" has been tracked! You'll receive updates about this event on the email you provided in the subscription page.`);
-      
-      // Redirect to subscription page if user hasn't subscribed yet
-      const hasSubscribed = localStorage.getItem('hasSubscribed');
-      if (!hasSubscribed) {
-        if (confirm('Would you like to subscribe to receive email updates about this and similar events?')) {
-          // Store the event data in localStorage to use it on the subscription page
-          localStorage.setItem('selectedEvent', JSON.stringify(event));
-          window.location.href = '/subscribe';
+      // Call the scrape API to fetch data based on the selected event
+      try {
+        const scrapeResponse = await fetch('/api/scrape');
+        if (scrapeResponse.ok) {
+          console.log('Scrape completed successfully');
+          const scrapeData = await scrapeResponse.json();
+          console.log('Scrape results:', scrapeData);
         }
+      } catch (scrapeError) {
+        console.error('Error calling scrape API:', scrapeError);
+        // Continue even if scrape fails
       }
+      
+      // Redirect to context-demo page to show personalized recommendations
+      window.location.href = '/context-demo';
     } catch (error) {
       console.error('Error tracking event interest:', error);
-      alert('Failed to track event interest. Please try again.');
+      setError('Failed to track event interest. Please try again.');
     } finally {
       setLoading(false);
     }

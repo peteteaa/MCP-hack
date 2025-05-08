@@ -22,17 +22,22 @@ export default function SubscribePage() {
   useEffect(() => {
     setMounted(true)
     
-    // Check if there's a selected event in localStorage
-    if (typeof window !== 'undefined') {
-      const storedEvent = localStorage.getItem('selectedEvent')
-      if (storedEvent) {
-        try {
-          setSelectedEvent(JSON.parse(storedEvent))
-        } catch (e) {
-          console.error('Error parsing stored event:', e)
+    // Fetch the selected event from our context API
+    const fetchContext = async () => {
+      try {
+        const response = await fetch('/api/context')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.data && data.data.selectedEvent) {
+            setSelectedEvent(data.data.selectedEvent)
+          }
         }
+      } catch (error) {
+        console.error('Error fetching context:', error)
       }
     }
+    
+    fetchContext()
   }, [])
 
   const validateForm = () => {
@@ -76,8 +81,10 @@ export default function SubscribePage() {
       // Mark user as subscribed in localStorage
       localStorage.setItem('hasSubscribed', 'true');
       
-      // Clear the selected event
-      localStorage.removeItem('selectedEvent');
+      // Clear the selected event from context API
+      await fetch('/api/context', {
+        method: 'DELETE',
+      });
 
       toast({
         title: "Subscription successful!",

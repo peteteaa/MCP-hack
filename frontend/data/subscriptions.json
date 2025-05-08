@@ -1,0 +1,64 @@
+[
+  {
+    "email": "pthambundit@icloud.com",
+    "createdAt": "2025-05-08T20:33:57.302Z",
+    "updatedAt": "2025-05-08T20:48:24.978Z",
+    "interests": [
+      "AI",
+      "ServiceNow",
+      "Summit",
+      "Business",
+      "Technology",
+      "London",
+      "Tech Week",
+      "Business Leaders"
+    ],
+    "selectedEvents": [
+      {
+        "id": 5,
+        "title": "AI Summits 2025 - ServiceNow",
+        "description": "Showcases how ServiceNow uses AI.  Focuses on how AI is used for people.",
+        "date": "March 20, 2025",
+        "location": "Boston Convention & Exhibition Center",
+        "url": "https://www.servicenow.com/events/ai-summits.html",
+        "keywords": [
+          "AI",
+          "ServiceNow",
+          "Summit",
+          "Business",
+          "Technology"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "The AI Summit London 2025",
+        "description": "Headline AI event of London Tech Week. Business leaders, tech innovators and AI practitioners gain insights.",
+        "date": "June 11-12, 2025",
+        "location": "London",
+        "url": "https://london.theaisummit.com/",
+        "keywords": [
+          "AI",
+          "Summit",
+          "London",
+          "Tech Week",
+          "Business Leaders"
+        ]
+      },
+      {
+        "id": 4,
+        "title": "The AI Summit London 2025",
+        "description": "Headline AI event of London Tech Week. Business leaders, tech innovators and AI practitioners gain insights.",
+        "date": "June 11-12, 2025",
+        "location": "London",
+        "url": "https://london.theaisummit.com/",
+        "keywords": [
+          "AI",
+          "Summit",
+          "London",
+          "Tech Week",
+          "Business Leaders"
+        ]
+      }
+    ]
+  }
+]
